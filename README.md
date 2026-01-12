@@ -61,7 +61,7 @@ This project follows Semantic Versioning 2.0.0 (https://semver.org).
 - New features increment MINOR
 - Bug fixes increment PATCH
 
-## How to run
+## How to run locally
 
 Use commands:
 
@@ -74,4 +74,20 @@ Or run directly with Node:
 
 ```
 node index.js
+```
+
+## How to run using Docker
+
+This repository includes a `Dockerfile` that runs the Node.js app.
+
+Build the image:
+
+```
+docker build -t devops-hivebox:latest .
+```
+
+Run the container:
+
+```
+docker run --rm devops-hivebox:latest
 ```
