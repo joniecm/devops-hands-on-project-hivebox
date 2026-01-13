@@ -34,4 +34,5 @@ if __name__ == "__main__":
         print_version()
     else:
         # Run the Flask web server
+        # Note: In production, use a WSGI server like gunicorn or uwsgi
         app.run(host='0.0.0.0', port=5000)
