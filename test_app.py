@@ -99,6 +99,11 @@ class TestTemperatureEndpoint(unittest.TestCase):
 class TestSenseboxService(unittest.TestCase):
     """Test cases for the sensebox_service module."""
     
+    @staticmethod
+    def get_aware_now():
+        """Helper method to get timezone-aware current datetime."""
+        return datetime.now().astimezone()
+    
     def test_extract_temperature_value_valid_data(self):
         """Test extracting temperature from valid senseBox data."""
         box_data = {
@@ -141,12 +146,12 @@ class TestSenseboxService(unittest.TestCase):
     
     def test_is_data_fresh_within_hour(self):
         """Test that data from within the last hour is considered fresh."""
-        recent_time = datetime.now(datetime.now().astimezone().tzinfo) - timedelta(minutes=30)
+        recent_time = self.get_aware_now() - timedelta(minutes=30)
         self.assertTrue(is_data_fresh(recent_time))
     
     def test_is_data_fresh_older_than_hour(self):
         """Test that data older than 1 hour is not considered fresh."""
-        old_time = datetime.now(datetime.now().astimezone().tzinfo) - timedelta(hours=2)
+        old_time = self.get_aware_now() - timedelta(hours=2)
         self.assertFalse(is_data_fresh(old_time))
     
     def test_is_data_fresh_exactly_one_hour(self):
@@ -154,13 +159,13 @@ class TestSenseboxService(unittest.TestCase):
         # Note: With <= comparison, exactly 1 hour is fresh
         # With < comparison, it would not be fresh
         # The implementation uses <=, so exactly 1 hour should be fresh
-        one_hour_ago = datetime.now(datetime.now().astimezone().tzinfo) - timedelta(hours=1, seconds=1)
+        one_hour_ago = self.get_aware_now() - timedelta(hours=1, seconds=1)
         self.assertFalse(is_data_fresh(one_hour_ago))
     
     @patch('sensebox_service.get_sensebox_data')
     def test_get_average_temperature_all_valid(self, mock_get_data):
         """Test average calculation with all valid data."""
-        now = datetime.now(datetime.now().astimezone().tzinfo)
+        now = self.get_aware_now()
         mock_get_data.side_effect = [
             {
                 "sensors": [{
@@ -205,7 +210,7 @@ class TestSenseboxService(unittest.TestCase):
     @patch('sensebox_service.get_sensebox_data')
     def test_get_average_temperature_stale_data(self, mock_get_data):
         """Test that stale data is excluded from average."""
-        old_time = datetime.now(datetime.now().astimezone().tzinfo) - timedelta(hours=2)
+        old_time = self.get_aware_now() - timedelta(hours=2)
         mock_get_data.return_value = {
             "sensors": [{
                 "title": "Temperatur",
