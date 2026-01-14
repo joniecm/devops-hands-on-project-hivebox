@@ -2,7 +2,7 @@
 
 import requests
 from datetime import datetime, timedelta
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 
 
 # List of senseBox IDs to fetch temperature data from
@@ -34,7 +34,7 @@ def get_sensebox_data(box_id: str) -> Optional[Dict]:
         return None
 
 
-def extract_temperature_value(box_data: Dict) -> Optional[Dict[str, any]]:
+def extract_temperature_value(box_data: Dict) -> Optional[Dict[str, Any]]:
     """Extract temperature sensor value and timestamp from senseBox data.
     
     Args:
