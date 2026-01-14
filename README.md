@@ -83,6 +83,45 @@ Returns the version of the currently deployed application.
 curl http://localhost:5000/version
 ```
 
+#### GET /temperature
+
+Returns the current average temperature across all configured senseBoxes.
+
+**Parameters:** None
+
+**Response (Success):**
+
+```json
+{
+  "average_temperature": 22.46
+}
+```
+
+**Response (Error - No Data Available):**
+
+```json
+{
+  "error": "No temperature data available",
+  "message": "Unable to retrieve fresh temperature data from senseBoxes. Data may be unavailable or older than 1 hour."
+}
+```
+
+**Status Codes:**
+- `200 OK`: Temperature data retrieved successfully
+- `503 Service Unavailable`: No fresh temperature data available
+
+**Notes:**
+- Only includes temperature data from the last hour
+- Temperature is rounded to 2 decimal places
+- Fetches data from openSenseMap API (https://api.opensensemap.org)
+- Configured senseBox IDs are stored in `sensebox_service.py`
+
+**Example:**
+
+```bash
+curl http://localhost:5000/temperature
+```
+
 ### How to run locally
 
 #### Install dependencies
