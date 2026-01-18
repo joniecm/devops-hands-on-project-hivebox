@@ -89,11 +89,12 @@ jobs:
         run: |
           python app.py &
           echo $! > app.pid
-          for i in {1..30}; do
-            if curl -sSf http://127.0.0.1:5000/version > /tmp/version.json; then
+          sleep 3 # give the app some time to start
+          for i in {1..10}; do
+            if curl -sSf http://127.0.0.1:5000/; then
               break
             fi
-            sleep 0.5
+            sleep 1
           done
 
           if ! curl -sSf http://127.0.0.1:5000/version > /tmp/version.json; then
