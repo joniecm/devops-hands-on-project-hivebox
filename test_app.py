@@ -134,7 +134,7 @@ class TestTemperatureEndpoint(unittest.TestCase):
 
     @patch('app.get_average_temperature_for_fresh_data')
     def test_temperature_status_too_hot(self, mock_get_avg):
-        """Test status is 'Too Hot' when temperature is more than 37."""
+        """Test status is 'Too Hot' when temperature is more than 36."""
         mock_get_avg.return_value = 40.0
         response = self.client.get('/temperature')
         self.assertEqual(response.status_code, 200)
@@ -143,7 +143,7 @@ class TestTemperatureEndpoint(unittest.TestCase):
 
     @patch('app.get_average_temperature_for_fresh_data')
     def test_temperature_status_too_hot_boundary(self, mock_get_avg):
-        """Test status is 'Too Hot' at boundary (37)."""
+        """Test status is 'Too Hot' at boundary (37, just above 36)."""
         mock_get_avg.return_value = 37.0
         response = self.client.get('/temperature')
         self.assertEqual(response.status_code, 200)
