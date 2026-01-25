@@ -258,7 +258,6 @@ Deploy the app manifests:
 
 ```bash
 kubectl apply -f ./infra/app/
-
 ```
 
 Wait until deployment is done (use kubectl to check) and access:
