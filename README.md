@@ -228,6 +228,32 @@ Then access the version endpoint:
 curl http://localhost:5000/version
 ```
 
+### Local Kubernetes with kind
+
+Create the cluster using the provided config (ports 4080 are mapped for ingress):
+
+```bash
+kind create cluster --config .\infra\kind-config.yaml
+```
+
+Get the kubeconfig for the cluster:
+
+```bash
+kind get kubeconfig --name hivebox
+```
+
+Install Ingress-NGINX:
+
+```bash
+kubectl apply -k .\infra\ingress-nginx
+```
+
+Delete the cluster when finished:
+
+```bash
+kind delete cluster --name hivebox
+```
+
 #### Basic API Tests
 
 The CI pipeline validates the `/version` endpoint response against the
