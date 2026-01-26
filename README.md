@@ -137,7 +137,6 @@ Exposes Prometheus metrics for the app.
 
 **Metrics:**
 
-- `up` (gauge): 1 when the app is running/responding
 - `http_requests_total{method, path, status}` (counter)
 - `http_request_duration_seconds{method, path, status}` (histogram)
 

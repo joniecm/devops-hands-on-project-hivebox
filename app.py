@@ -2,8 +2,8 @@ import sys
 import time
 
 from flask import Flask, Response, g, jsonify, request
-from prometheus_client import (CONTENT_TYPE_LATEST, Counter, Gauge,
-                               Histogram, generate_latest)
+from prometheus_client import (CONTENT_TYPE_LATEST, Counter, Histogram,
+                               generate_latest)
 
 from sensebox_service import get_average_temperature_for_fresh_data
 from version import VERSION
@@ -23,8 +23,6 @@ HTTP_REQUEST_DURATION_SECONDS = Histogram(
     buckets=[0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
 )
 
-UP = Gauge("up", "App up indicator")
-
 
 @app.before_request
 def start_timer():
@@ -34,14 +32,14 @@ def start_timer():
 @app.after_request
 def record_metrics(response):
     duration = time.perf_counter() - g.start_time
+    route = request.url_rule.rule if request.url_rule else "unmatched"
     labels = {
         "method": request.method,
-        "path": request.path,
+        "path": route,
         "status": str(response.status_code),
     }
     HTTP_REQUESTS_TOTAL.labels(**labels).inc()
     HTTP_REQUEST_DURATION_SECONDS.labels(**labels).observe(duration)
-    UP.set(1)
     return response
 
 
