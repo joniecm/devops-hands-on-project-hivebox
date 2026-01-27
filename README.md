@@ -178,8 +178,16 @@ python app.py --version
 
 #### Run tests
 
+Unit tests:
+
 ```bash
 python -m unittest test_app.py -v
+```
+
+Integration tests:
+
+```bash
+pytest tests/integration -v
 ```
 
 ### Code Quality & Linting
