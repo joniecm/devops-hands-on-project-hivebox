@@ -5,8 +5,8 @@ from flask import Flask, Response, g, jsonify, request
 from prometheus_client import (CONTENT_TYPE_LATEST, Counter, Histogram,
                                generate_latest)
 
-from sensebox_service import get_average_temperature_for_fresh_data
-from version import VERSION
+from src.sensebox_service import get_average_temperature_for_fresh_data
+from src.version import VERSION
 
 app = Flask(__name__)
 
@@ -109,7 +109,7 @@ def print_version() -> None:
     Exits with code 0 on success, 1 on failure.
     """
     if not VERSION:
-        print("", file=sys.stderr)
+        print("Error: VERSION not defined", file=sys.stderr)
         sys.exit(1)
 
     print(VERSION)
