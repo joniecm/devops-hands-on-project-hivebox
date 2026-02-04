@@ -4,15 +4,15 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'infra/**/*.yaml'
-      - 'infra/**/*.yml'
-      - '.github/workflows/checkov-security-scan.yml'
+      - "infra/app/**/*.yaml"
+      - "infra/app/**/*.yml"
+      - ".github/workflows/checkov-security-scan.yml"
   push:
     branches: [main]
     paths:
-      - 'infra/**/*.yaml'
-      - 'infra/**/*.yml'
-      - '.github/workflows/checkov-security-scan.yml'
+      - "infra/app/**/*.yaml"
+      - "infra/app/**/*.yml"
+      - ".github/workflows/checkov-security-scan.yml"
   workflow_dispatch:
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install Checkov
         run: |
@@ -47,7 +47,7 @@ jobs:
 
       - name: Upload Checkov SARIF results
         if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: results_sarif.sarif
           category: checkov-kubernetes
