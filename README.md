@@ -51,11 +51,38 @@ Here is a pre-start checklist:
 
 ## Implementation
 
+### Project Structure
+
+The project follows a standard Python package layout:
+
+```
+hivebox/
+├── src/                        # Application source code
+│   ├── __init__.py
+│   ├── app.py                  # Flask application
+│   ├── sensebox_service.py     # SenseBox API integration
+│   └── version.py              # Version information
+├── tests/                      # Test files
+│   ├── test_app.py            # Unit tests
+│   └── integration/           # Integration tests
+│       └── test_integration.py
+├── infra/                      # Infrastructure configuration
+│   └── kind-config.yaml
+├── .github/                    # GitHub workflows
+├── requirements.txt            # Python dependencies
+├── pytest.ini                  # Pytest configuration
+├── .dockerignore
+├── .gitignore
+├── sonar-project.properties
+├── Dockerfile
+└── README.md
+```
+
 ### Versioning
 
 This project follows Semantic Versioning 2.0.0 (https://semver.org).
 
-- Version numbers are stored in `version.py`
+- Version numbers are stored in `src/version.py`
 - Releases are tagged as `vMAJOR.MINOR.PATCH`
 - Breaking changes increment MAJOR
 - New features increment MINOR
@@ -123,7 +150,7 @@ Returns the current average temperature across all configured senseBoxes.
 - Only includes temperature data from the last hour
 - Temperature is rounded to 2 decimal places
 - Fetches data from openSenseMap API (https://api.opensensemap.org)
-- Configured senseBox IDs are stored in `sensebox_service.py`
+- Configured senseBox IDs are stored in `src/sensebox_service.py`
 
 **Example:**
 
@@ -159,7 +186,7 @@ pip install -r requirements.txt
 Run the Flask web application:
 
 ```bash
-python app.py
+python -m src.app
 ```
 
 The server will start on `http://0.0.0.0:5000`. You can then access the `/version` endpoint:
@@ -173,21 +200,27 @@ curl http://localhost:5000/version
 To print the version and exit:
 
 ```bash
-python app.py --version
+python -m src.app --version
 ```
 
 #### Run tests
 
-Unit tests:
+All tests:
 
 ```bash
-python -m unittest test_app.py -v
+pytest tests/ -v
 ```
 
-Integration tests:
+Unit tests only:
 
 ```bash
-pytest tests/integration -v
+pytest tests/test_app.py -v
+```
+
+Integration tests only:
+
+```bash
+pytest tests/integration/ -v
 ```
 
 ### Code Quality & Linting
