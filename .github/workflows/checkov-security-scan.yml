@@ -1,0 +1,59 @@
+name: Checkov Security Scan
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'infra/**/*.yaml'
+      - 'infra/**/*.yml'
+      - '.github/workflows/checkov-security-scan.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'infra/**/*.yaml'
+      - 'infra/**/*.yml'
+      - '.github/workflows/checkov-security-scan.yml'
+  workflow_dispatch:
+
+jobs:
+  checkov-scan:
+    runs-on: ubuntu-latest
+    name: Checkov - Kubernetes Security Scan
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Checkov
+        run: |
+          pip install checkov
+
+      - name: Run Checkov scan on Kubernetes manifests
+        run: |
+          checkov --directory infra/app/ \
+            --framework kubernetes \
+            --output cli \
+            --output sarif \
+            --output-file-path . \
+            --soft-fail
+        continue-on-error: true
+
+      - name: Upload Checkov SARIF results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results_sarif.sarif
+          category: checkov-kubernetes
+
+      - name: Display scan summary
+        if: always()
+        run: |
+          echo "### Checkov Scan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Scanned Kubernetes manifests in \`infra/app/\` directory." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "For detailed results, check the Security tab in the repository." >> $GITHUB_STEP_SUMMARY

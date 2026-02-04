@@ -263,6 +263,30 @@ autopep8 --in-place --recursive .
 ruff check --fix .
 ```
 
+### Security Scanning with Checkov
+
+This project uses **Checkov** to scan Kubernetes manifests for security misconfigurations.
+
+**Install Checkov:**
+
+```bash
+pip install checkov
+```
+
+**Run security scan:**
+
+```bash
+# Scan all Kubernetes manifests
+checkov --directory infra/app/ --framework kubernetes
+
+# Compact output
+checkov --directory infra/app/ --framework kubernetes --compact
+```
+
+**Automated scanning:** Checkov runs automatically on pull requests and pushes to main when Kubernetes manifests change. Results are available in the GitHub Security tab.
+
+For detailed security scan results, remediation actions, and security best practices, see [SECURITY.md](SECURITY.md).
+
 ### How to run using Docker
 
 This repository includes a `Dockerfile` that runs the Flask web application.
@@ -308,13 +332,26 @@ kubectl apply -k ./infra/ingress-nginx
 Load the locally built image into kind:
 
 ```bash
-kind load docker-image hivebox:latest --name hivebox
+kind load docker-image hivebox:v1.0.0 --name hivebox
 ```
 
-Deploy the app manifests:
+Note: If you're using a locally built image with tag `hivebox:latest`, you'll need to update the deployment.yaml image reference or tag your image as `v1.0.0`:
+
+```bash
+docker tag hivebox:latest hivebox:v1.0.0
+kind load docker-image hivebox:v1.0.0 --name hivebox
+```
+
+Deploy the app manifests (namespace will be created automatically):
 
 ```bash
 kubectl apply -f ./infra/app/
+```
+
+Verify the deployment:
+
+```bash
+kubectl get all -n hivebox
 ```
 
 Wait until deployment is done (use kubectl to check) and access:
