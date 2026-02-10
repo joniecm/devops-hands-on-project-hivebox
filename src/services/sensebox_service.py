@@ -173,7 +173,9 @@ class SenseBoxService:
                     temperatures.append(temp_data["value"])
 
         if not temperatures:
-            logger.info("No fresh temperature data available from senseBoxes.")
+            logger.info(
+                "No fresh temperature data available from senseBoxes."
+            )
             return None
 
         return sum(temperatures) / len(temperatures)
@@ -210,7 +212,9 @@ class SenseBoxService:
                 logger.debug("No data returned for senseBox %s.", box_id)
 
         if not temperatures:
-            logger.info("No fresh temperature data available from senseBoxes.")
+            logger.info(
+                "No fresh temperature data available from senseBoxes."
+            )
             return None, []
 
         return (

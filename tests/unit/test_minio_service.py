@@ -137,7 +137,10 @@ class TestMinioService(unittest.TestCase):
 
         record = service.get_latest_record()
 
-        client.get_object.assert_called_once_with("temps", newer.object_name)
+        client.get_object.assert_called_once_with(
+            "temps",
+            newer.object_name,
+        )
         self.assertIsNotNone(record)
         self.assertEqual(record.average_temperature, 22.5)
         self.assertEqual(record.source_hivebox_ids, ["box-1", "box-2"])

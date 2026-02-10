@@ -121,7 +121,10 @@ class MinioService:
                 content_type="application/json",
             )
         except (S3Error, Exception) as exc:
-            logger.warning("Failed to write temperature data to MinIO: %s", exc)
+            logger.warning(
+                "Failed to write temperature data to MinIO: %s",
+                exc,
+            )
 
     def put_temperature_records(self, records: list[TemperatureRecord]) -> None:
         for record in records:
@@ -137,7 +140,10 @@ class MinioService:
                 )
             )
         except (S3Error, Exception) as exc:
-            logger.warning("Failed to list temperature records: %s", exc)
+            logger.warning(
+                "Failed to list temperature records: %s",
+                exc,
+            )
             return None
 
         if not objects:
