@@ -1,11 +1,12 @@
 import sys
 import time
 
-from flask import Flask, Response, g, jsonify, request
-from prometheus_client import (CONTENT_TYPE_LATEST, Counter, Histogram,
-                               generate_latest)
+from flask import Flask, g, request
+from prometheus_client import Counter, Histogram
 
-from src.sensebox_service import get_average_temperature_for_fresh_data
+from src.routes.metrics import metrics_bp
+from src.routes.temperature import temperature_bp
+from src.routes.version import version_bp
 from src.version import VERSION
 
 app = Flask(__name__)
@@ -43,64 +44,9 @@ def record_metrics(response):
     return response
 
 
-@app.route('/metrics', methods=['GET'])
-def metrics():
-    """Expose Prometheus metrics."""
-    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
-
-
-@app.route('/version', methods=['GET'])
-def version():
-    """Return the version of the deployed app.
-
-    Returns:
-        JSON response with version field containing the app version.
-    """
-    return jsonify({"version": VERSION})
-
-
-def get_temperature_status(temperature: float) -> str:
-    """Determine temperature status based on the average temperature.
-
-    Args:
-        temperature: The average temperature value.
-
-    Returns:
-        Status string: "Too Cold", "Good", or "Too Hot".
-    """
-    if temperature < 10:
-        return "Too Cold"
-    elif temperature <= 36:
-        return "Good"
-    else:
-        return "Too Hot"
-
-
-@app.route('/temperature', methods=['GET'])
-def temperature():
-    """Return the current average temperature from all senseBoxes.
-
-    Fetches temperature data from configured senseBoxes and returns
-    the average value. Only includes data from the last hour.
-
-    Returns:
-        JSON response with average_temperature field, or error message.
-    """
-    avg_temp = get_average_temperature_for_fresh_data()
-
-    if avg_temp is None:
-        return jsonify({
-            "error": "No temperature data available",
-            "message": (
-                "Unable to retrieve fresh temperature data from "
-                "senseBoxes. Data may be unavailable or older than 1 hour."
-            )
-        }), 503
-
-    return jsonify({
-        "average_temperature": round(avg_temp, 2),
-        "status": get_temperature_status(avg_temp)
-    })
+app.register_blueprint(metrics_bp)
+app.register_blueprint(temperature_bp)
+app.register_blueprint(version_bp)
 
 
 def print_version() -> None:

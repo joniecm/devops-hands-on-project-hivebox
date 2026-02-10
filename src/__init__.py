@@ -1,1 +1,0 @@
-"""HiveBox application package."""
