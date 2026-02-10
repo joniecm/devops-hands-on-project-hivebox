@@ -24,14 +24,22 @@ class TestTemperatureService(unittest.TestCase):
     def test_get_temperature_status_too_hot(self):
         self.assertEqual(get_temperature_status(36.1), "Too Hot")
 
-    @patch("src.services.temperature_service.get_latest_temperature_record")
-    def test_get_latest_temperature_response_none(self, mock_get_latest):
-        mock_get_latest.return_value = None
+    @patch("src.services.temperature_service.MinioService.from_env")
+    @patch("src.services.temperature_service.sensebox_service.get_average_temperature_with_sources")
+    def test_get_latest_temperature_response_none(self, mock_get_average, mock_from_env):
+        mock_get_average.return_value = (None, [])
+        mock_from_env.return_value = None
         self.assertIsNone(get_latest_temperature_response())
 
-    @patch("src.services.temperature_service.get_latest_temperature_record")
-    def test_get_latest_temperature_response_rounds(self, mock_get_latest):
-        mock_get_latest.return_value = TemperatureRecord(
+    @patch("src.services.temperature_service.collect_temperature_record")
+    @patch("src.services.temperature_service.sensebox_service.get_average_temperature_with_sources")
+    def test_get_latest_temperature_response_rounds(
+        self,
+        mock_get_average,
+        mock_collect,
+    ):
+        mock_get_average.return_value = (22.456, ["box-1"])
+        mock_collect.return_value = TemperatureRecord(
             average_temperature=22.456,
             timestamp=datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
             source_hivebox_ids=["box-1"],

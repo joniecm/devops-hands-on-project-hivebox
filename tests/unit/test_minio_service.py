@@ -1,7 +1,7 @@
 import json
 import unittest
 from datetime import datetime, timezone
-from unittest.mock import Mock, patch
+from unittest.mock import ANY, Mock, patch
 
 from src.config import MinioConfig
 from src.services.minio_service import (
@@ -40,6 +40,7 @@ class TestMinioService(unittest.TestCase):
             secret_key="secret",
             secure=False,
             region="us-east-1",
+            http_client=ANY,
         )
         self.assertIs(service.client, client)
         self.assertEqual(service.bucket, "temps")
