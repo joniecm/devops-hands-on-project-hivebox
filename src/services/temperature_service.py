@@ -16,7 +16,9 @@ class TemperatureService:
 
     def __init__(self, sensebox_ids: Optional[List[str]] = None) -> None:
         self._sensebox_ids = (
-            list(sensebox_ids) if sensebox_ids is not None else list(SENSEBOX_IDS)
+            list(sensebox_ids)
+            if sensebox_ids is not None
+            else list(SENSEBOX_IDS)
         )
 
     def get_sensebox_ids(self) -> List[str]:

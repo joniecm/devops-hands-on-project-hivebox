@@ -22,7 +22,9 @@ class SenseBoxService:
         api_base: str = OPENSENSEMAP_API_BASE,
         temperature_sensor_phenomenon: str = TEMPERATURE_SENSOR_PHENOMENON,
     ) -> None:
-        self.sensebox_ids = list(sensebox_ids) if sensebox_ids is not None else []
+        self.sensebox_ids = (
+            list(sensebox_ids) if sensebox_ids is not None else []
+        )
         self.api_base = api_base
         self.temperature_sensor_phenomenon = temperature_sensor_phenomenon
 
@@ -100,7 +102,8 @@ class SenseBoxService:
             box_ids: List of senseBox IDs. If None, uses configured IDs.
 
         Returns:
-            Average temperature as float, or None if no valid data is available.
+            Average temperature as float, or None if no valid data is
+            available.
         """
         if box_ids is None:
             box_ids = self.sensebox_ids
