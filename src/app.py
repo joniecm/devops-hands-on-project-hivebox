@@ -37,22 +37,22 @@ def configure_logging() -> None:
         return
     level_name = os.getenv("LOG_LEVEL", "INFO").upper()
     level = getattr(logging, level_name, logging.INFO)
-    
+
     class UTCFormatter(logging.Formatter):
         def formatTime(self, record, datefmt=None):
             dt = datetime.fromtimestamp(record.created, tz=timezone.utc)
             if datefmt:
                 return dt.strftime(datefmt)
             return dt.isoformat()
-    
+
     formatter = UTCFormatter(
         fmt="[%(asctime)s] [%(levelname)s] %(name)s: %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S %z",
     )
-    
+
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)
-    
+
     root_logger = logging.getLogger()
     root_logger.setLevel(level)
     root_logger.addHandler(handler)
@@ -70,21 +70,34 @@ def ensure_minio_ready_or_exit() -> None:
     if minio_service is None:
         logger.error("MinIO configuration missing or invalid")
         sys.exit(1)
-    
+
     max_retries = 12
     retry_delay = 2
     for attempt in range(1, max_retries + 1):
         try:
             minio_service.ensure_bucket_or_raise()
-            logger.info("MinIO connection established successfully on attempt %d", attempt)
+            logger.info(
+                "MinIO connection established successfully on attempt %d",
+                attempt,
+            )
             return
         except RuntimeError as exc:
             if attempt < max_retries:
                 wait_time = retry_delay * attempt
-                logger.warning("Attempt %d/%d: %s. Retrying in %ds...", attempt, max_retries, exc, wait_time)
+                logger.warning(
+                    "Attempt %d/%d: %s. Retrying in %ds...",
+                    attempt,
+                    max_retries,
+                    exc,
+                    wait_time,
+                )
                 time.sleep(wait_time)
             else:
-                logger.error("Failed to connect to MinIO after %d attempts: %s", max_retries, exc)
+                logger.error(
+                    "Failed to connect to MinIO after %d attempts: %s",
+                    max_retries,
+                    exc,
+                )
                 sys.exit(1)
 
 

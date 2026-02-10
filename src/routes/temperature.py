@@ -26,7 +26,8 @@ def temperature():
                     "error": "No temperature data available",
                     "message": (
                         "Unable to retrieve fresh temperature data from "
-                        "senseBoxes. Data may be unavailable or older than 1 hour."
+                        "senseBoxes. Data may be unavailable or older than 1 "
+                        "hour."
                     ),
                 }
             ),

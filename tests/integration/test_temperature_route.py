@@ -14,7 +14,11 @@ def client():
 def _record(value: float) -> TemperatureResponse:
     return TemperatureResponse(
         average_temperature=round(value, 2),
-        status="Good" if 10 <= value <= 36 else ("Too Cold" if value < 10 else "Too Hot"),
+        status=(
+            "Good"
+            if 10 <= value <= 36
+            else ("Too Cold" if value < 10 else "Too Hot")
+        ),
     )
 
 
@@ -35,7 +39,7 @@ def test_temperature_endpoint_integration(client, monkeypatch):
 
 @pytest.mark.integration
 def test_temperature_endpoint_api_timeout(client, monkeypatch):
-    """Test the temperature endpoint handles missing data (timeout equivalent)."""
+    """Test the temperature endpoint handles missing data timeout."""
     monkeypatch.setattr(
         "src.routes.temperature.get_latest_temperature_response",
         lambda: None,
@@ -50,7 +54,7 @@ def test_temperature_endpoint_api_timeout(client, monkeypatch):
 
 @pytest.mark.integration
 def test_temperature_endpoint_connection_error(client, monkeypatch):
-    """Test the temperature endpoint handles missing data (connection error equivalent)."""
+    """Test the temperature endpoint handles missing data connection error."""
     monkeypatch.setattr(
         "src.routes.temperature.get_latest_temperature_response",
         lambda: None,
@@ -65,7 +69,7 @@ def test_temperature_endpoint_connection_error(client, monkeypatch):
 
 @pytest.mark.integration
 def test_temperature_endpoint_http_error(client, monkeypatch):
-    """Test the temperature endpoint handles missing data (HTTP error equivalent)."""
+    """Test the temperature endpoint handles missing data HTTP error."""
     monkeypatch.setattr(
         "src.routes.temperature.get_latest_temperature_response",
         lambda: None,
@@ -80,7 +84,7 @@ def test_temperature_endpoint_http_error(client, monkeypatch):
 
 @pytest.mark.integration
 def test_temperature_endpoint_missing_sensors(client, monkeypatch):
-    """Test the temperature endpoint handles missing data (no sensors equivalent)."""
+    """Test the temperature endpoint handles missing sensors."""
     monkeypatch.setattr(
         "src.routes.temperature.get_latest_temperature_response",
         lambda: None,
@@ -95,7 +99,7 @@ def test_temperature_endpoint_missing_sensors(client, monkeypatch):
 
 @pytest.mark.integration
 def test_temperature_endpoint_no_temperature_sensor(client, monkeypatch):
-    """Test the temperature endpoint handles missing data (no sensor equivalent)."""
+    """Test the temperature endpoint handles missing temperature sensor."""
     monkeypatch.setattr(
         "src.routes.temperature.get_latest_temperature_response",
         lambda: None,
@@ -110,7 +114,7 @@ def test_temperature_endpoint_no_temperature_sensor(client, monkeypatch):
 
 @pytest.mark.integration
 def test_temperature_endpoint_invalid_temperature_value(client, monkeypatch):
-    """Test the temperature endpoint handles missing data (invalid value equivalent)."""
+    """Test the temperature endpoint handles invalid temperature value."""
     monkeypatch.setattr(
         "src.routes.temperature.get_latest_temperature_response",
         lambda: None,
@@ -125,7 +129,7 @@ def test_temperature_endpoint_invalid_temperature_value(client, monkeypatch):
 
 @pytest.mark.integration
 def test_temperature_endpoint_stale_data(client, monkeypatch):
-    """Test the temperature endpoint handles missing data (stale equivalent)."""
+    """Test the temperature endpoint handles stale data."""
     monkeypatch.setattr(
         "src.routes.temperature.get_latest_temperature_response",
         lambda: None,

@@ -25,7 +25,12 @@ class TemperatureRecord:
 class MinioService:
     """Service wrapper for MinIO operations."""
 
-    def __init__(self, client: Minio, bucket: str, create_bucket: bool = False):
+    def __init__(
+        self,
+        client: Minio,
+        bucket: str,
+        create_bucket: bool = False,
+    ):
         self.client = client
         self.bucket = bucket
         self.create_bucket = create_bucket
@@ -46,10 +51,18 @@ class MinioService:
 
     @classmethod
     def from_config(cls, config: MinioConfig) -> "MinioService":
-        timeout = urllib3.util.Timeout(connect=config.timeout, read=config.timeout)
+        timeout = urllib3.util.Timeout(
+            connect=config.timeout,
+            read=config.timeout,
+        )
         http_client = urllib3.PoolManager(
             timeout=timeout,
-            retries=urllib3.Retry(total=0, connect=0, read=0, redirect=False),
+            retries=urllib3.Retry(
+                total=0,
+                connect=0,
+                read=0,
+                redirect=False,
+            ),
         )
         client = Minio(
             config.endpoint,
@@ -62,7 +75,10 @@ class MinioService:
         return cls(client, config.bucket, create_bucket=config.create_bucket)
 
     def ensure_bucket_or_raise(self) -> None:
-        """Ensure MinIO is reachable and the bucket exists or can be created."""
+        """Ensure MinIO is reachable and the bucket exists.
+
+        Creates the bucket when allowed by configuration.
+        """
         try:
             if self.client.bucket_exists(self.bucket):
                 logger.info("MinIO bucket %s is ready.", self.bucket)
@@ -86,7 +102,9 @@ class MinioService:
             logger.warning("Failed to ensure MinIO bucket: %s", exc)
 
     def put_temperature_record(self, record: TemperatureRecord) -> None:
-        object_name = record.timestamp.strftime("temperature/%Y/%m/%d/%H%M%S.json")
+        object_name = record.timestamp.strftime(
+            "temperature/%Y/%m/%d/%H%M%S.json"
+        )
         payload = {
             "average_temperature": record.average_temperature,
             "timestamp": record.timestamp.isoformat(),
@@ -132,7 +150,10 @@ class MinioService:
 
         response = None
         try:
-            response = self.client.get_object(self.bucket, latest_object.object_name)
+            response = self.client.get_object(
+                self.bucket,
+                latest_object.object_name,
+            )
             payload = json.loads(response.read().decode("utf-8"))
         except (S3Error, json.JSONDecodeError, Exception) as exc:
             logger.warning("Failed to read latest temperature record: %s", exc)
@@ -146,7 +167,9 @@ class MinioService:
         return TemperatureRecord(
             average_temperature=float(payload["average_temperature"]),
             timestamp=timestamp,
-            source_hivebox_ids=list(payload.get("source_hivebox_ids", [])),
+            source_hivebox_ids=list(
+                payload.get("source_hivebox_ids", [])
+            ),
         )
 
 

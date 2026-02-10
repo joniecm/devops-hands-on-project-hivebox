@@ -85,7 +85,10 @@ class SenseBoxService:
             logger.warning("Failed to fetch senseBox %s: %s", box_id, exc)
             return None
 
-    def extract_temperature_value(self, box_data: Dict) -> Optional[Dict[str, Any]]:
+    def extract_temperature_value(
+        self,
+        box_data: Dict,
+    ) -> Optional[Dict[str, Any]]:
         """Extract temperature sensor value and timestamp from senseBox data.
 
         Args:
@@ -119,7 +122,11 @@ class SenseBoxService:
 
         return None
 
-    def is_data_fresh(self, timestamp: datetime, max_age_hours: int = 1) -> bool:
+    def is_data_fresh(
+        self,
+        timestamp: datetime,
+        max_age_hours: int = 1,
+    ) -> bool:
         """Check if data timestamp is within the acceptable age.
 
         Args:
@@ -206,7 +213,11 @@ class SenseBoxService:
             logger.info("No fresh temperature data available from senseBoxes.")
             return None, []
 
-        return sum(temperatures) / len(temperatures), used_ids
+        return (
+            sum(temperatures) / len(temperatures),
+            used_ids,
+        )
+
 
 connect_timeout = _get_timeout_env("SENSEBOX_CONNECT_TIMEOUT", 2)
 read_timeout = _get_timeout_env("SENSEBOX_READ_TIMEOUT", 5)

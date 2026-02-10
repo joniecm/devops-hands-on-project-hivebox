@@ -21,8 +21,8 @@ class TestSenseboxService(unittest.TestCase):
                     "title": "Temperatur",
                     "lastMeasurement": {
                         "value": "23.5",
-                        "createdAt": "2026-01-14T22:00:00.000Z"
-                    }
+                        "createdAt": "2026-01-14T22:00:00.000Z",
+                    },
                 }
             ]
         }
@@ -47,8 +47,8 @@ class TestSenseboxService(unittest.TestCase):
                     "title": "Humidity",
                     "lastMeasurement": {
                         "value": "65.0",
-                        "createdAt": "2026-01-14T22:00:00.000Z"
-                    }
+                        "createdAt": "2026-01-14T22:00:00.000Z",
+                    },
                 }
             ]
         }
@@ -77,45 +77,57 @@ class TestSenseboxService(unittest.TestCase):
         service = SenseBoxService()
         self.assertFalse(service.is_data_fresh(one_hour_ago))
 
-    @patch('src.services.sensebox_service.SenseBoxService.get_sensebox_data')
+    @patch(
+        "src.services.sensebox_service.SenseBoxService.get_sensebox_data"
+    )
     def test_get_average_temperature_all_valid(self, mock_get_data):
         """Test average calculation with all valid data."""
         now = self.get_aware_now()
         mock_get_data.side_effect = [
             {
-                "sensors": [{
-                    "title": "Temperatur",
-                    "lastMeasurement": {
-                        "value": "20.0",
-                        "createdAt": now.isoformat()
+                "sensors": [
+                    {
+                        "title": "Temperatur",
+                        "lastMeasurement": {
+                            "value": "20.0",
+                            "createdAt": now.isoformat(),
+                        },
                     }
-                }]
+                ],
             },
             {
-                "sensors": [{
-                    "title": "Temperatur",
-                    "lastMeasurement": {
-                        "value": "22.0",
-                        "createdAt": now.isoformat()
+                "sensors": [
+                    {
+                        "title": "Temperatur",
+                        "lastMeasurement": {
+                            "value": "22.0",
+                            "createdAt": now.isoformat(),
+                        },
                     }
-                }]
+                ],
             },
             {
-                "sensors": [{
-                    "title": "Temperatur",
-                    "lastMeasurement": {
-                        "value": "24.0",
-                        "createdAt": now.isoformat()
+                "sensors": [
+                    {
+                        "title": "Temperatur",
+                        "lastMeasurement": {
+                            "value": "24.0",
+                            "createdAt": now.isoformat(),
+                        },
                     }
-                }]
-            }
+                ],
+            },
         ]
 
         service = SenseBoxService()
-        avg = service.get_average_temperature_for_fresh_data(["box1", "box2", "box3"])
+        avg = service.get_average_temperature_for_fresh_data(
+            ["box1", "box2", "box3"]
+        )
         self.assertEqual(avg, 22.0)
 
-    @patch('src.services.sensebox_service.SenseBoxService.get_sensebox_data')
+    @patch(
+        "src.services.sensebox_service.SenseBoxService.get_sensebox_data"
+    )
     def test_get_average_temperature_no_data(self, mock_get_data):
         """Test average calculation when no data is available."""
         mock_get_data.return_value = None
@@ -124,18 +136,22 @@ class TestSenseboxService(unittest.TestCase):
         avg = service.get_average_temperature_for_fresh_data(["box1"])
         self.assertIsNone(avg)
 
-    @patch('src.services.sensebox_service.SenseBoxService.get_sensebox_data')
+    @patch(
+        "src.services.sensebox_service.SenseBoxService.get_sensebox_data"
+    )
     def test_get_average_temperature_stale_data(self, mock_get_data):
         """Test that stale data is excluded from average."""
         old_time = self.get_aware_now() - timedelta(hours=2)
         mock_get_data.return_value = {
-            "sensors": [{
-                "title": "Temperatur",
-                "lastMeasurement": {
-                    "value": "20.0",
-                    "createdAt": old_time.isoformat()
+            "sensors": [
+                {
+                    "title": "Temperatur",
+                    "lastMeasurement": {
+                        "value": "20.0",
+                        "createdAt": old_time.isoformat(),
+                    },
                 }
-            }]
+            ],
         }
 
         service = SenseBoxService()

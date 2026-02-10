@@ -16,7 +16,10 @@ class TestMinioService(unittest.TestCase):
 
     def test_from_env_missing_config(self):
         """Return None when MinIO config is not provided."""
-        with patch("src.services.minio_service.load_minio_config", return_value=None):
+        with patch(
+            "src.services.minio_service.load_minio_config",
+            return_value=None,
+        ):
             self.assertIsNone(MinioService.from_env())
 
     def test_from_config_builds_client(self):
@@ -123,11 +126,13 @@ class TestMinioService(unittest.TestCase):
         client.list_objects.return_value = [older, newer]
 
         response = Mock()
-        response.read.return_value = json.dumps({
-            "average_temperature": 22.5,
-            "timestamp": "2026-01-01T12:00:00+00:00",
-            "source_hivebox_ids": ["box-1", "box-2"],
-        }).encode("utf-8")
+        response.read.return_value = json.dumps(
+            {
+                "average_temperature": 22.5,
+                "timestamp": "2026-01-01T12:00:00+00:00",
+                "source_hivebox_ids": ["box-1", "box-2"],
+            }
+        ).encode("utf-8")
         client.get_object.return_value = response
 
         record = service.get_latest_record()
