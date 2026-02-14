@@ -68,11 +68,9 @@ class TestSenseboxService(unittest.TestCase):
 
     def test_is_data_fresh_exactly_one_hour(self):
         """Test that data exactly 1 hour old is at the boundary."""
-        # Note: With <= comparison, exactly 1 hour is fresh
-        # With < comparison, it would not be fresh
-        # The implementation uses <=, so exactly 1 hour should be fresh
-        one_hour_ago = self.get_aware_now() - timedelta(hours=1, seconds=1)
-        self.assertFalse(self.service._is_data_fresh(one_hour_ago))
+        # The implementation uses <=, so exactly 1 hour should be fresh.
+        one_hour_ago = self.get_aware_now() - timedelta(hours=1)
+        self.assertTrue(self.service._is_data_fresh(one_hour_ago))
 
     @patch.object(SenseBoxService, "_get_sensebox_data")
     def test_get_average_temperature_all_valid(self, mock_get_data):

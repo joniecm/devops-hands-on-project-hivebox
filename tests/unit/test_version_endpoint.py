@@ -10,8 +10,8 @@ class TestVersionEndpoint(unittest.TestCase):
     def setUp(self):
         """Set up test client."""
         self.app = app
-        self.client = self.app.test_client()
         self.app.testing = True
+        self.client = self.app.test_client()
 
     def test_version_endpoint_exists(self):
         """Test that /version endpoint exists and returns 200."""

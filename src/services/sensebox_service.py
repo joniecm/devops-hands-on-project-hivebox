@@ -121,6 +121,3 @@ class SenseBoxService:
             return None
 
         return sum(temperatures) / len(temperatures)
-
-
-sensebox_service = SenseBoxService()

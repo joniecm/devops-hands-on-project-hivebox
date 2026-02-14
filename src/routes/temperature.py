@@ -35,7 +35,9 @@ def temperature():
             )
         }), 503
 
+    rounded_temp = round(avg_temp, 2)
+
     return jsonify({
-        "average_temperature": round(avg_temp, 2),
-        "status": temperature_service.get_temperature_status(avg_temp)
+        "average_temperature": rounded_temp,
+        "status": temperature_service.get_temperature_status(rounded_temp)
     })

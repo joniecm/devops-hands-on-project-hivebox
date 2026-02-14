@@ -11,8 +11,8 @@ class TestTemperatureEndpoint(unittest.TestCase):
     def setUp(self):
         """Set up test client."""
         self.app = app
-        self.client = self.app.test_client()
         self.app.testing = True
+        self.client = self.app.test_client()
 
     @patch(
         "src.routes.temperature.sensebox_service."
