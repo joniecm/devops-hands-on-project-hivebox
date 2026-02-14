@@ -126,7 +126,9 @@ class MinioService:
                 exc,
             )
 
-    def put_temperature_records(self, records: list[TemperatureRecord]) -> None:
+    def put_temperature_records(
+        self, records: list[TemperatureRecord]
+    ) -> None:
         for record in records:
             self.put_temperature_record(record)
 
