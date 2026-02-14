@@ -162,7 +162,10 @@ class MinioService:
             )
             payload = json.loads(response.read().decode("utf-8"))
         except (S3Error, json.JSONDecodeError, Exception) as exc:
-            logger.warning("Failed to read latest temperature record: %s", exc)
+            logger.warning(
+                "Failed to read latest temperature record: %s",
+                exc,
+            )
             return None
         finally:
             if response is not None:

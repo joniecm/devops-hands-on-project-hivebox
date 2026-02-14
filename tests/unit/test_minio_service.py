@@ -117,11 +117,15 @@ class TestMinioService(unittest.TestCase):
 
         older = Mock()
         older.object_name = "temperature/2026/01/01/090000.json"
-        older.last_modified = datetime(2026, 1, 1, 9, 0, 0, tzinfo=timezone.utc)
+        older.last_modified = datetime(
+            2026, 1, 1, 9, 0, 0, tzinfo=timezone.utc
+        )
 
         newer = Mock()
         newer.object_name = "temperature/2026/01/01/120000.json"
-        newer.last_modified = datetime(2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+        newer.last_modified = datetime(
+            2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc
+        )
 
         client.list_objects.return_value = [older, newer]
 
