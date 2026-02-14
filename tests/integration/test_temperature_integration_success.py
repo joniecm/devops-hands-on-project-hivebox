@@ -1,0 +1,56 @@
+from datetime import datetime, timezone
+
+import pytest
+import requests
+
+from src.services.sensebox_service import TEMPERATURE_SENSOR_PHENOMENON
+from src.services.temperature_service import SENSEBOX_IDS
+
+
+@pytest.mark.integration
+def test_temperature_endpoint_integration(client, monkeypatch):
+    """Test the temperature endpoint with successful data from all boxes."""
+    values = {
+        SENSEBOX_IDS[0]: 20.0,
+        SENSEBOX_IDS[1]: 22.0,
+        SENSEBOX_IDS[2]: 24.0,
+    }
+
+    class DummyResponse:
+        def __init__(self, payload, status_code=200):
+            self._payload = payload
+            self.status_code = status_code
+
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise requests.HTTPError(f"status={self.status_code}")
+
+        def json(self):
+            return self._payload
+
+    def fake_get(url, timeout=None):
+        box_id = url.rsplit("/", 1)[-1]
+        now = datetime.now(timezone.utc).isoformat()
+        payload = {
+            "sensors": [
+                {
+                    "title": TEMPERATURE_SENSOR_PHENOMENON,
+                    "lastMeasurement": {
+                        "value": str(values[box_id]),
+                        "createdAt": now,
+                    },
+                }
+            ]
+        }
+        return DummyResponse(payload)
+
+    monkeypatch.setattr(
+        "src.services.sensebox_service.requests.get",
+        fake_get,
+    )
+
+    response = client.get("/temperature")
+    assert response.status_code == 200
+    payload = response.get_json()
+    assert payload["average_temperature"] == 22.0
+    assert payload["status"] == "Good"
