@@ -1,3 +1,5 @@
+"""Metrics endpoint blueprint."""
+
 from flask import Blueprint, Response
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 

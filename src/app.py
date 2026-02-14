@@ -14,6 +14,9 @@ from src.routes.store import store_bp
 from src.routes.temperature import temperature_bp
 from src.routes.version import version_bp
 from src.services.minio_service import MinioService
+from src.routes.metrics import metrics_bp
+from src.routes.temperature import temperature_bp
+from src.routes.version import version_bp
 from src.version import VERSION
 
 logger = logging.getLogger(__name__)
@@ -155,4 +158,4 @@ if __name__ == "__main__":
         print_version()
     else:
         start_temperature_flusher()
-        app.run(host="0.0.0.0", port=5000)
+        app.run(host='127.0.0.1', port=5000)

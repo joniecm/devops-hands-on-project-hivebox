@@ -1,3 +1,5 @@
+"""Version endpoint blueprint."""
+
 from flask import Blueprint, jsonify
 
 from src.version import VERSION

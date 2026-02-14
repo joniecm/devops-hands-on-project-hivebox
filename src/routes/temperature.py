@@ -1,11 +1,15 @@
-from dataclasses import asdict
+"""Temperature endpoint blueprint."""
 
 from flask import Blueprint, jsonify
 
-from src.services.temperature_service import get_latest_temperature_response
+from src.services.sensebox_service import SenseBoxService
+from src.services.temperature_service import TemperatureService
 
 
 temperature_bp = Blueprint("temperature", __name__)
+
+sensebox_service = SenseBoxService()
+temperature_service = TemperatureService()
 
 
 @temperature_bp.route("/temperature", methods=["GET"])
@@ -18,22 +22,22 @@ def temperature():
     Returns:
         JSON response with average_temperature field, or error message.
     """
-    response_payload = get_latest_temperature_response()
-    if response_payload is None:
-        return (
-            jsonify(
-                {
-                    "error": "No temperature data available",
-                    "message": (
-                        "Unable to retrieve fresh temperature data from "
-                        "senseBoxes. Data may be unavailable or older than 1 "
-                        "hour."
-                    ),
-                }
-            ),
-            503,
-        )
+    avg_temp = sensebox_service.get_average_temperature_for_fresh_data(
+        box_ids=temperature_service.get_sensebox_ids()
+    )
 
-    return jsonify(asdict(response_payload))
+    if avg_temp is None:
+        return jsonify({
+            "error": "No temperature data available",
+            "message": (
+                "Unable to retrieve fresh temperature data from "
+                "senseBoxes. Data may be unavailable or older than 1 hour."
+            )
+        }), 503
 
+    rounded_temp = round(avg_temp, 2)
 
+    return jsonify({
+        "average_temperature": rounded_temp,
+        "status": temperature_service.get_temperature_status(rounded_temp)
+    })
