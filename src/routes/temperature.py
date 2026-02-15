@@ -44,7 +44,7 @@ def temperature():
         TEMPERATURE_REQUESTS_TOTAL.labels(status="success").inc()
         
         # Update temperature data age if available
-        if hasattr(response, 'data_age_seconds') and response.data_age_seconds is not None:
+        if response.data_age_seconds is not None:
             TEMPERATURE_DATA_AGE_SECONDS.set(response.data_age_seconds)
         
         return jsonify({

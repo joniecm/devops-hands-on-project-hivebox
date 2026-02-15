@@ -141,10 +141,13 @@ def _deserialize_temperature_response(
     payload: dict,
 ) -> Optional[TemperatureResponse]:
     try:
+        data_age_value = payload.get("data_age_seconds")
+        data_age_seconds = float(data_age_value) if data_age_value is not None else None
+        
         return TemperatureResponse(
             average_temperature=float(payload["average_temperature"]),
             status=str(payload["status"]),
-            data_age_seconds=float(payload["data_age_seconds"]) if payload.get("data_age_seconds") is not None else None,
+            data_age_seconds=data_age_seconds,
         )
     except (KeyError, TypeError, ValueError):
         return None
