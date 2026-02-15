@@ -213,6 +213,64 @@ Exposes Prometheus metrics for the app.
 curl http://localhost:5000/metrics
 ```
 
+#### GET /readyz
+
+Returns readiness status of the application for health checks (Kubernetes readiness probe, load balancer health checks).
+
+**Parameters:** None
+
+**Response (Ready - 200 OK):**
+
+```json
+{
+  "status": "ready",
+  "sensebox": {
+    "accessible": 3,
+    "total": 3,
+    "inaccessible": 0
+  },
+  "cache": {
+    "age_seconds": 45,
+    "max_age_seconds": 300
+  }
+}
+```
+
+**Response (Not Ready - 503 Service Unavailable):**
+
+```json
+{
+  "status": "not_ready",
+  "reason": "More than 50% of senseBoxes are inaccessible (2/3) and cached data is older than 5 minutes.",
+  "sensebox": {
+    "accessible": 1,
+    "total": 3,
+    "inaccessible": 2
+  },
+  "cache": {
+    "age_seconds": 360,
+    "max_age_seconds": 300
+  }
+}
+```
+
+**Status Codes:**
+
+- `200 OK`: Service is ready (default response)
+- `503 Service Unavailable`: Service is not ready (only when BOTH conditions are met: >50% senseBoxes inaccessible AND cache older than 5 minutes)
+
+**Notes:**
+
+- Returns 503 only when **both** conditions are true simultaneously
+- Used for Kubernetes readiness probes and load balancer health checks
+- Checks actual senseBox API accessibility in real-time
+
+**Example:**
+
+```bash
+curl http://localhost:5000/readyz
+```
+
 ### How to run locally
 
 #### Install dependencies

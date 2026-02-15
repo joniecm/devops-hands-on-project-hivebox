@@ -10,6 +10,7 @@ from prometheus_client import Counter, Histogram
 from src.background.temperature_flusher import start_temperature_flusher
 from src.config import load_minio_config
 from src.routes.metrics import metrics_bp
+from src.routes.readyz import readyz_bp
 from src.routes.store import store_bp
 from src.routes.temperature import temperature_bp
 from src.routes.version import version_bp
@@ -128,6 +129,7 @@ def create_app() -> Flask:
 
     app.register_blueprint(metrics_bp)
     app.register_blueprint(version_bp)
+    app.register_blueprint(readyz_bp)
     app.register_blueprint(temperature_bp)
     app.register_blueprint(store_bp)
 
