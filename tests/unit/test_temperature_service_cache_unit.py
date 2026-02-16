@@ -20,7 +20,11 @@ class TestTemperatureServiceSerialization(unittest.TestCase):
 
         self.assertEqual(
             payload,
-            {"average_temperature": 22.5, "status": "Good", "data_age_seconds": None},
+            {
+                "average_temperature": 22.5,
+                "status": "Good",
+                "data_age_seconds": None,
+            },
         )
 
     def test_deserialize_temperature_response(self):
